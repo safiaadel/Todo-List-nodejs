@@ -1,0 +1,28 @@
+# .github/workflows/deploy.yml
+
+name: Deploy Todo App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t todo-app .
+
+      - name: Run Docker container with MongoDB URI
+        run: docker run -e MONGO_URI=$MONGO_URI todo-app
